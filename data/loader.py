@@ -22,7 +22,7 @@ class RAWLoader:
 
     def post_process_raw_images(self) -> None:
         self.load_raw_images() if self.raw_images is None else None
-        self.rgb_images = [img.postprocess(no_auto_bright=True,use_auto_wb=False,gamma=None) for img in self.raw_images]
+        self.rgb_images = [img.postprocess(no_auto_bright=True,use_auto_wb=True,gamma=None) for img in self.raw_images]
 
     def findRAWImagesInDir(self) -> None:
         self.images = listdir(self.path)
