@@ -6,6 +6,17 @@ import cv2 as cv
 from numpy.lib.function_base import cov
 from unslab.utils.helpers import show
 import math
+from enum import Enum
+
+class AVAILIBLE_ALGORITHMS(Enum):
+    SUSUKI="suzuki"
+    CANNY="canny"
+    # TODO: (@Jacob-Mowat) - Implement these algorithms
+    # SOBEL="sobel"
+    # LAPLACIAN="laplacian"
+    # PREWITT="prewitt"
+    # ROBERTS="roberts"
+    # SCHARR="scharr"
 
 class EdgeDetector:
     image: numpy.ndarray
@@ -17,7 +28,12 @@ class EdgeDetector:
 
     threshold: int
 
-    def __init__(self, image_rgb: numpy.ndarray):
+    def __init__(
+        self,
+        image_rgb: numpy.ndarray,
+        threshold: int = 170,
+        algorithm: AVAILIBLE_ALGORITHMS = AVAILIBLE_ALGORITHMS.CANNY
+    ):
         self.image = image_rgb
         self.mode = True
         self.ix = -1
@@ -26,6 +42,13 @@ class EdgeDetector:
 
         # Tunable parameters
         self.threshold = 170
+        self.algorithm = algorithm
+
+    def run(self):
+        if self.algorithm == AVAILIBLE_ALGORITHMS.CANNY:
+            self.use_canny()
+        elif self.algorithm == AVAILIBLE_ALGORITHMS.SUSUKI:
+            self.use_susuki()
 
     def draw_rectangle(self, event, x, y, flags, param):
         overlay = self.image.copy()
