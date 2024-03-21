@@ -11,6 +11,8 @@ class EdgeDetector:
     iy: int
     img2: numpy.ndarray
 
+    threshold: int
+
     def __init__(self, image_rgb: numpy.ndarray):
         self.image = image_rgb
         self.mode = True
@@ -18,9 +20,9 @@ class EdgeDetector:
         self.iy = -1
         self.drawing = False
 
-    def detect_edges_contour(self):
-        cv.imshow('image',self.image)
-        cv.waitKey(0)
+        # Tunable parameters
+        self.threshold = 170
+
     def draw_rectangle(self, event, x, y, flags, param):
         overlay = self.image.copy()
         output = self.image.copy()
@@ -63,7 +65,7 @@ class EdgeDetector:
         imgray = cv.cvtColor(fixed, cv.COLOR_BGR2GRAY)
         print(imgray.shape)
         cv.imshow('image',imgray)
-        cv.waitKey(0)
+        ret, thresh = cv.threshold(imgray, self.threshold, 255, cv.THRESH_BINARY_INV | cv.THRESH_OTSU)
         ret, thresh = cv.threshold(imgray, 127, 255, 0)
         contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_TC89_KCOS )
 
