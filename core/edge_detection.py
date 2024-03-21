@@ -59,17 +59,18 @@ class EdgeDetector:
                 break
 
         cv.destroyAllWindows()
+    def convert_to_gray(self):
         fixed = cv.cvtColor(self.image, cv.COLOR_RGB2BGR)
-        cv.imshow('image', fixed)
-        cv.waitKey(0)
-        imgray = cv.cvtColor(fixed, cv.COLOR_BGR2GRAY)
-        print(imgray.shape)
-        cv.imshow('image',imgray)
-        ret, thresh = cv.threshold(imgray, self.threshold, 255, cv.THRESH_BINARY_INV | cv.THRESH_OTSU)
-        ret, thresh = cv.threshold(imgray, 127, 255, 0)
-        contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_TC89_KCOS )
+        return cv.cvtColor(fixed, cv.COLOR_BGR2GRAY)
 
-        cv.drawContours(self.image, contours, -1, (0,255,0), 6)
-        cv.imshow('image', self.image)
+    def detect_edges_contour(self):
+        print("Detecting edges...")
+        imgray = self.convert_to_gray()
+        ret, thresh = cv.threshold(imgray, self.threshold, 255, cv.THRESH_BINARY_INV | cv.THRESH_OTSU)
+        show(thresh)
+        # contours, hierarchy = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_TC89_KCOS )
+        # CHAIN_APPROX_NONE
+        contours, hierarchy = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE )
+
 
         return contours
