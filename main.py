@@ -1,5 +1,5 @@
 from data.loader import RAWLoader
-from unslab.core.edge_detection import EdgeDetector
+from unslab.core.edge_detection import EdgeDetector, AVAILIBLE_ALGORITHMS
 from typing import List
 import numpy
 
@@ -9,10 +9,11 @@ def main():
 
     images: List[numpy.ndarray] = fronts_loader.get_images()
 
+    edge_detector = EdgeDetector(algorithm=AVAILIBLE_ALGORITHMS.CANNY, threshold=170, sigma=0.33)
     for image in images:
-        edge_detector = EdgeDetector(image)
-        edge_detector.detect_edges_contour()
-        # edge_detector.use_canny()
+        edge_detector.set_image(image)
+        edge_detector.run()
+        edge_detector.reset()
 
 
 if __name__ == "__main__":

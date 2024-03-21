@@ -27,11 +27,13 @@ class EdgeDetector:
     img2: numpy.ndarray | None
 
     threshold: int
+    sigma: float
 
     def __init__(
         self,
-        image_rgb: numpy.ndarray,
+        image_rgb: numpy.ndarray | None = None,
         threshold: int = 170,
+        sigma: float = 0.33,
         algorithm: AVAILIBLE_ALGORITHMS = AVAILIBLE_ALGORITHMS.CANNY
     ):
         self.image = image_rgb
@@ -43,8 +45,13 @@ class EdgeDetector:
         # Tunable parameters
         self.threshold = 170
         self.algorithm = algorithm
+        self.sigma = sigma
 
     def run(self):
+        if self.image is None:
+            print("No image to process")
+            return
+
         if self.algorithm == AVAILIBLE_ALGORITHMS.CANNY:
             self.use_canny()
         elif self.algorithm == AVAILIBLE_ALGORITHMS.SUSUKI:
@@ -158,11 +165,9 @@ class EdgeDetector:
         if imgray is None:
             return
 
-        sigma = 0.36
-
         median_v = numpy.median(list(imgray))
-        lower = int(max(0, (1.0 - sigma) * median_v))
-        upper = int(min(255, (1.0 + sigma) * median_v))
+        lower = int(max(0, (1.0 - self.sigma) * median_v))
+        upper = int(min(255, (1.0 + self.sigma) * median_v))
 
         edges = cv.Canny(imgray, threshold1=lower, threshold2=upper, L2gradient=True)
         show(edges, "Canny Edge Detection")
