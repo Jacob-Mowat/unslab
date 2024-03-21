@@ -1,7 +1,11 @@
+from typing import Sequence
+from cv2.typing import MatLike
 import imageio
 import numpy
 import cv2 as cv
 from numpy.lib.function_base import cov
+from utils.helpers import show
+import math
 
 class EdgeDetector:
     image: numpy.ndarray
@@ -59,6 +63,8 @@ class EdgeDetector:
                 break
 
         cv.destroyAllWindows()
+
+
     def convert_to_gray(self):
         fixed = cv.cvtColor(self.image, cv.COLOR_RGB2BGR)
         return cv.cvtColor(fixed, cv.COLOR_BGR2GRAY)
@@ -72,5 +78,23 @@ class EdgeDetector:
         # CHAIN_APPROX_NONE
         contours, hierarchy = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE )
 
+
+        self.img2 = self.image.copy()
+        cv.drawContours(self.img2, contours, -1, (0,255,0), 3)
+
+        print(f"Using threshold: {ret}/{self.threshold}")
+        show(self.img2)
+
+        newContours: Sequence[MatLike] = [numpy.array(0) for _ in range(len(contours))]
+
+        # Aproximate contours
+        for i, contour in enumerate(contours):
+            newContours[i] = cv.approxPolyDP(contour, 0.0001*cv.arcLength(contour, True), True)
+
+        self.img2 = self.image.copy()
+        cv.drawContours(self.img2, newContours, -1, (0,255,0), 3)
+
+        print(f"Using threshold: {ret}/{self.threshold}")
+        show(self.img2)
 
         return contours
