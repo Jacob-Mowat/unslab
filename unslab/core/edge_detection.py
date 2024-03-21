@@ -4,7 +4,7 @@ import imageio
 import numpy
 import cv2 as cv
 from numpy.lib.function_base import cov
-from utils.helpers import show
+from unslab.utils.helpers import show
 import math
 
 class EdgeDetector:

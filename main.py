@@ -1,5 +1,5 @@
 from data.loader import RAWLoader
-from core.edge_detection import EdgeDetector
+from unslab.core.edge_detection import EdgeDetector
 from typing import List
 import numpy
 
