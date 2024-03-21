@@ -48,6 +48,7 @@ class EdgeDetector:
             if self.mode == True:
                 cv.rectangle(overlay, (self.ix, self.iy), (x, y), (0, 255, 0), -1)
                 cv.addWeighted(overlay, alpha, output, 1 - alpha, 0, self.image)
+
     def run_draw_rectangle(self):
         cv.namedWindow('image')
         cv.setMouseCallback('image', self.draw_rectangle)
@@ -98,3 +99,17 @@ class EdgeDetector:
         show(self.img2)
 
         return contours
+
+    def use_canny(self):
+        print("Using Canny edge detection...")
+
+        imgray = self.convert_to_gray()
+
+        sigma = 0.36
+
+        median_v = numpy.median(list(imgray))
+        lower = int(max(0, (1.0 - sigma) * median_v))
+        upper = int(min(255, (1.0 + sigma) * median_v))
+
+        edges = cv.Canny(imgray, threshold1=lower, threshold2=upper, L2gradient=True)
+        show(edges, "Canny Edge Detection")
