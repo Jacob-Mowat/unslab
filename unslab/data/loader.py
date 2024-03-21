@@ -8,15 +8,23 @@ class RAWLoader:
     path: str
     found_images: List[str]
 
-    raw_images: List[rawpy.RawPy]
-    rgb_images: List[numpy.ndarray]
+    raw_images: List[rawpy.RawPy] | None
+    rgb_images: List[numpy.ndarray] | None
 
     def __init__(self, path):
         self.path = path
+        self.images = None
+        self.raw_images = None
+        self.rgb_images = None
 
     def load_raw_images(self) -> None:
         # If images are not found, find them
-        self.findRAWImagesInDir() if self.images is None else None
+        if self.images is None:
+            self.findRAWImagesInDir()
+
+            if self.images is None:
+                print("No images found in directory")
+                return
 
         # Create a list of paths to the images
         paths: List[str] = [self.path + img for img in self.images]
@@ -26,7 +34,12 @@ class RAWLoader:
 
     def post_process_raw_images(self) -> None:
         # If raw images are not loaded, load them
-        self.load_raw_images() if self.raw_images is None else None
+        if self.raw_images is None:
+            self.load_raw_images()
+
+            if self.raw_images is None:
+                print("No raw images loaded")
+                return
 
         # Post process the raw images
         self.rgb_images = [img.postprocess(no_auto_bright=True,use_auto_wb=True,gamma=None) for img in self.raw_images]

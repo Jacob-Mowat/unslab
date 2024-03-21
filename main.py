@@ -1,4 +1,4 @@
-from data.loader import RAWLoader
+from unslab.data.loader import RAWLoader
 from unslab.core.edge_detection import EdgeDetector, AVAILIBLE_ALGORITHMS
 from typing import List
 import numpy
