@@ -19,12 +19,12 @@ class AVAILIBLE_ALGORITHMS(Enum):
     # SCHARR="scharr"
 
 class EdgeDetector:
-    image: numpy.ndarray
+    image: numpy.ndarray | None
     drawing: bool
     mode: bool
     ix: int
     iy: int
-    img2: numpy.ndarray
+    img2: numpy.ndarray | None
 
     threshold: int
 
@@ -50,7 +50,21 @@ class EdgeDetector:
         elif self.algorithm == AVAILIBLE_ALGORITHMS.SUSUKI:
             self.use_susuki()
 
+    def reset(self):
+        self.image = None
+        self.drawing = False
+        self.mode = True
+        self.ix = -1
+        self.iy = -1
+        self.img2 = None
+
+    def set_image(self, image: numpy.ndarray):
+        self.image = image
+
     def draw_rectangle(self, event, x, y, flags, param):
+        if self.image is None or self.img2 is None:
+            return
+
         overlay = self.image.copy()
         output = self.image.copy()
         alpha = 0.5
@@ -73,6 +87,9 @@ class EdgeDetector:
                 cv.addWeighted(overlay, alpha, output, 1 - alpha, 0, self.image)
 
     def run_draw_rectangle(self):
+        if self.image is None:
+            return
+
         cv.namedWindow('image')
         cv.setMouseCallback('image', self.draw_rectangle)
 
@@ -90,13 +107,23 @@ class EdgeDetector:
 
 
     def convert_to_gray(self):
+        if self.image is None:
+            return
+
         fixed = cv.cvtColor(self.image, cv.COLOR_RGB2BGR)
         return cv.cvtColor(fixed, cv.COLOR_BGR2GRAY)
 
-    def detect_edges_contour(self):
-        print("Detecting edges...")
+    def use_susuki(self):
+        if self.image is None:
+            return
+
+        print("Detecting edges using Susuki...")
         imgray = self.convert_to_gray()
-        ret, thresh = cv.threshold(imgray, self.threshold, 255, cv.THRESH_BINARY_INV | cv.THRESH_OTSU)
+
+        if imgray is None:
+            return
+
+        ret, thresh = cv.threshold(imgray, self.threshold or 170, 255, cv.THRESH_BINARY_INV | cv.THRESH_OTSU)
         show(thresh)
         # contours, hierarchy = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_TC89_KCOS )
         # CHAIN_APPROX_NONE
@@ -124,9 +151,12 @@ class EdgeDetector:
         return contours
 
     def use_canny(self):
-        print("Using Canny edge detection...")
+        print("Detecting edges using Canny...")
 
         imgray = self.convert_to_gray()
+
+        if imgray is None:
+            return
 
         sigma = 0.36
 
