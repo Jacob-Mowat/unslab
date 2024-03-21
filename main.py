@@ -5,7 +5,6 @@ import numpy
 
 def main():
     fronts_loader = RAWLoader("/Users/jacob/documents/unprocessed_slabs/CharizardEX/front/")
-    fronts_loader.load_raw_images()
     fronts_loader.post_process_raw_images()
 
     images: List[numpy.ndarray] = fronts_loader.get_images()
