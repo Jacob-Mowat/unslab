@@ -2,13 +2,14 @@ from os import listdir
 from typing import List
 import rawpy
 import imageio
+import numpy
 
 class RAWLoader:
     path: str
     found_images: List[str]
 
     raw_images: List[rawpy.RawPy]
-    rgb_images: List[imageio.core.util.Array]
+    rgb_images: List[numpy.ndarray]
 
     def __init__(self, path):
         self.path = path
@@ -21,10 +22,10 @@ class RAWLoader:
 
     def post_process_raw_images(self) -> None:
         self.load_raw_images() if self.raw_images is None else None
-        self.rgb_images = [img.postprocess(no_auto_bright=True,use_auto_wb =False,gamma=None) for img in self.raw_images]
+        self.rgb_images = [img.postprocess(no_auto_bright=True,use_auto_wb=False,gamma=None) for img in self.raw_images]
 
     def findRAWImagesInDir(self) -> None:
         self.images = listdir(self.path)
 
-    def get_images(self) -> List[imageio.core.util.Array]:
+    def get_images(self) -> List[numpy.ndarray]:
         return self.rgb_images
